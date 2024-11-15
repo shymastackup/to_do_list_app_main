@@ -103,6 +103,7 @@ class Task {
   final String title;
   final String notes;
   final DateTime dueDate;
+  final String priority;
   bool isComplete;
 
   Task({
@@ -111,7 +112,7 @@ class Task {
     required this.notes,
     required this.dueDate,
     this.isComplete = false,
-    required String priority,
+    required this.priority,
   });
 
   factory Task.fromJson(Map<String, dynamic> json) => Task(
@@ -120,10 +121,9 @@ class Task {
         notes: json['notes'],
         dueDate: DateTime.parse(json['dueDate']),
         isComplete: json['isComplete'],
-        priority: '',
+        priority: json['priority'] ??
+            'Low', // Default to 'Low' if priority is missing
       );
-
-  String? get priority => null;
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -131,5 +131,6 @@ class Task {
         'notes': notes,
         'dueDate': dueDate.toIso8601String(),
         'isComplete': isComplete,
+        'priority': priority,
       };
 }
