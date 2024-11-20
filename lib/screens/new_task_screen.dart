@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:first_app_to_do_list/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,14 +12,14 @@ class NewTaskScreen extends StatefulWidget {
 }
 
 class _NewTaskScreenState extends State<NewTaskScreen> {
-  final titleController = TextEditingController();
-  final notesController = TextEditingController();
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController notesController = TextEditingController();
   DateTime? selectedDate;
   String? selectedPriority;
 
   @override
   Widget build(BuildContext context) {
-    final taskProvider = Provider.of<TaskProvider>(context);
+    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(title: const Text('New Task')),
@@ -36,7 +38,8 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
               decoration: InputDecoration(
                 labelText: 'Title',
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0)),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
                 prefixIcon: const Icon(Icons.title),
               ),
             ),
@@ -46,7 +49,8 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
               decoration: InputDecoration(
                 labelText: 'Notes',
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0)),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
                 prefixIcon: const Icon(Icons.note),
               ),
               maxLines: 3,
@@ -61,8 +65,9 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
                       ? 'Select Due Date'
                       : '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}',
                   style: TextStyle(
-                      fontSize: 16,
-                      color: selectedDate == null ? Colors.grey : Colors.black),
+                    fontSize: 16,
+                    color: selectedDate == null ? Colors.grey : Colors.black,
+                  ),
                 ),
                 const Spacer(),
                 TextButton(
@@ -88,7 +93,8 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
               decoration: InputDecoration(
                 labelText: 'Priority',
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0)),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
               ),
               items: ['Low', 'Medium', 'High'].map((priority) {
                 return DropdownMenuItem(
@@ -113,6 +119,7 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
                       title: titleController.text,
                       notes: notesController.text,
                       dueDate: selectedDate ?? DateTime.now(),
+                      isComplete: false,
                       priority: selectedPriority ?? 'Low',
                     );
                     taskProvider.addTask(task);

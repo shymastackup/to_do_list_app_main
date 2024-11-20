@@ -1,8 +1,7 @@
+import 'package:first_app_to_do_list/screens/api_service.dart';
 import 'package:first_app_to_do_list/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
 import 'task_list_screen.dart';
 
@@ -36,11 +35,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// Authentication Provider
 class AuthProvider with ChangeNotifier {
   bool _isAuthenticated = false;
+
   bool get isAuthenticated => _isAuthenticated;
 
   void login(String email, String password) {
+    // Add your login logic here (e.g., API call for authentication)
     _isAuthenticated = true;
     notifyListeners();
   }
@@ -51,86 +53,112 @@ class AuthProvider with ChangeNotifier {
   }
 }
 
+// Task Provider
 class TaskProvider with ChangeNotifier {
   List<Task> _tasks = [];
   List<Task> get tasks => _tasks;
 
-  TaskProvider() {
-    loadTasks();
-  }
+  final ApiService apiService = ApiService();
 
+  // Load tasks from API
   Future<void> loadTasks() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? tasksString = prefs.getString('tasks');
-    if (tasksString != null) {
-      List<dynamic> jsonData = json.decode(tasksString);
-      _tasks = jsonData.map((task) => Task.fromJson(task)).toList();
+    try {
+      _tasks = await apiService.getTasks();
       notifyListeners();
+    } catch (e) {
+      debugPrint('Error loading tasks: $e');
     }
   }
 
-  Future<void> saveTasks() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String tasksString =
-        json.encode(_tasks.map((task) => task.toJson()).toList());
-    await prefs.setString('tasks', tasksString);
-  }
-
-  void addTask(Task task) {
-    _tasks.add(task);
-    saveTasks();
-    notifyListeners();
-  }
-
-  void updateTask(Task task) {
-    final index = _tasks.indexWhere((t) => t.id == task.id);
-    if (index != -1) {
-      _tasks[index] = task;
-      saveTasks();
-      notifyListeners();
+  // Add a new task
+  Future<void> addTask(Task task) async {
+    try {
+      bool isSuccess = await apiService.addTask(task);
+      if (isSuccess) {
+        _tasks.add(task);
+        notifyListeners();
+      } else {
+        debugPrint("Error adding task");
+      }
+    } catch (e) {
+      debugPrint("Error adding task: $e");
     }
   }
 
-  void deleteTask(String id) {
-    _tasks.removeWhere((task) => task.id == id);
-    saveTasks();
-    notifyListeners();
+  // Update an existing task
+  Future<void> updateTask(Task task) async {
+    try {
+      bool isSuccess = await apiService.updateTask(task);
+      if (isSuccess) {
+        int index = _tasks.indexWhere((t) => t.id == task.id);
+        if (index != -1) {
+          _tasks[index] = task;
+          notifyListeners();
+        }
+      } else {
+        debugPrint("Error updating task");
+      }
+    } catch (e) {
+      debugPrint("Error updating task: $e");
+    }
+  }
+
+  // Delete a task
+  Future<void> deleteTask(String taskId) async {
+    try {
+      bool isSuccess = await apiService.deleteTask(taskId);
+      if (isSuccess) {
+        _tasks.removeWhere((task) => task.id == taskId);
+        notifyListeners();
+      } else {
+        debugPrint("Error deleting task");
+      }
+    } catch (e) {
+      debugPrint("Error deleting task: $e");
+    }
   }
 }
 
+// Task Model
 class Task {
-  final String id;
-  final String title;
-  final String notes;
-  final DateTime dueDate;
-  final String priority;
+  String id;
+  String title;
+  String notes;
+  DateTime dueDate;
   bool isComplete;
+  String priority;
 
   Task({
     required this.id,
     required this.title,
     required this.notes,
     required this.dueDate,
-    this.isComplete = false,
+    required this.isComplete,
     required this.priority,
   });
 
-  factory Task.fromJson(Map<String, dynamic> json) => Task(
-        id: json['id'],
-        title: json['title'],
-        notes: json['notes'],
-        dueDate: DateTime.parse(json['dueDate']),
-        isComplete: json['isComplete'],
-        priority: json['priority'] ??
-            'Low', // Default to 'Low' if priority is missing
-      );
+  // Convert Task object to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'notes': notes,
+      'dueDate': dueDate.toIso8601String(),
+      'isComplete': isComplete,
+      'priority': priority,
+    };
+  }
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'notes': notes,
-        'dueDate': dueDate.toIso8601String(),
-        'isComplete': isComplete,
-        'priority': priority,
-      };
+  // Create Task object from JSON
+  factory Task.fromJson(Map<String, dynamic> json) {
+    return Task(
+      id: json['_id'] ?? '',
+      title: json['title'] ?? 'Untitled',
+      notes: json['notes'] ?? '',
+      dueDate:
+          DateTime.parse(json['dueDate'] ?? DateTime.now().toIso8601String()),
+      isComplete: json['isComplete'] ?? false,
+      priority: json['priority'] ?? 'Low',
+    );
+  }
 }
