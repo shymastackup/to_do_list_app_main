@@ -1,4 +1,4 @@
-import 'package:first_app_to_do_list/screens/api_service.dart';
+import 'package:first_app_to_do_list/api_service.dart';
 import 'package:first_app_to_do_list/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,14 +35,12 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Authentication Provider
 class AuthProvider with ChangeNotifier {
   bool _isAuthenticated = false;
 
   bool get isAuthenticated => _isAuthenticated;
 
   void login(String email, String password) {
-    // Add your login logic here (e.g., API call for authentication)
     _isAuthenticated = true;
     notifyListeners();
   }
@@ -55,22 +53,22 @@ class AuthProvider with ChangeNotifier {
 
 // Task Provider
 class TaskProvider with ChangeNotifier {
-  List<Task> _tasks = [];
+  final List<Task> _tasks = [];
   List<Task> get tasks => _tasks;
 
   final ApiService apiService = ApiService();
 
-  // Load tasks from API
   Future<void> loadTasks() async {
     try {
-      _tasks = await apiService.getTasks();
+      _tasks.clear();
+      List<Task> fetchedTasks = await apiService.getTasks();
+      _tasks.addAll(fetchedTasks);
       notifyListeners();
     } catch (e) {
-      debugPrint('Error loading tasks: $e');
+      debugPrint("Error loading tasks: $e");
     }
   }
 
-  // Add a new task
   Future<void> addTask(Task task) async {
     try {
       bool isSuccess = await apiService.addTask(task);
@@ -85,7 +83,6 @@ class TaskProvider with ChangeNotifier {
     }
   }
 
-  // Update an existing task
   Future<void> updateTask(Task task) async {
     try {
       bool isSuccess = await apiService.updateTask(task);
@@ -103,7 +100,6 @@ class TaskProvider with ChangeNotifier {
     }
   }
 
-  // Delete a task
   Future<void> deleteTask(String taskId) async {
     try {
       bool isSuccess = await apiService.deleteTask(taskId);
@@ -119,7 +115,6 @@ class TaskProvider with ChangeNotifier {
   }
 }
 
-// Task Model
 class Task {
   String id;
   String title;
@@ -137,7 +132,6 @@ class Task {
     required this.priority,
   });
 
-  // Convert Task object to JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -149,7 +143,6 @@ class Task {
     };
   }
 
-  // Create Task object from JSON
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(
       id: json['_id'] ?? '',

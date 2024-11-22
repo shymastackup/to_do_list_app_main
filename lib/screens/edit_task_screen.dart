@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:first_app_to_do_list/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +8,7 @@ class EditTaskScreen extends StatefulWidget {
   const EditTaskScreen({super.key, required this.task});
 
   @override
+  // ignore: library_private_types_in_public_api
   _EditTaskScreenState createState() => _EditTaskScreenState();
 }
 
@@ -147,6 +146,27 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                 ),
                 child: const Text(
                   'Save Changes',
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  taskProvider.deleteTask(widget.task.id);
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14.0),
+                  backgroundColor: Colors.red,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                child: const Text(
+                  'Delete Task',
                   style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),
