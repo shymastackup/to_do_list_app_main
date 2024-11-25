@@ -1,41 +1,3 @@
-// class Task {
-//   final String id;
-//   final String title;
-//   final String notes;
-//   final DateTime dueDate;
-//   final String priority;
-//   final bool isComplete;
-
-//   Task({
-//     required this.id,
-//     required this.title,
-//     required this.notes,
-//     required this.dueDate,
-//     this.priority = 'None',
-//     this.isComplete = false,
-//   });
-
-//   factory Task.fromJson(Map<String, dynamic> json) {
-//     return Task(
-//       id: json['id'],
-//       title: json['title'],
-//       notes: json['notes'],
-//       dueDate: DateTime.parse(json['dueDate']),
-//       priority: json['priority'],
-//       isComplete: json['isComplete'],
-//     );
-//   }
-
-//   Map<String, dynamic> toJson() => {
-//         'id': id,
-//         'title': title,
-//         'notes': notes,
-//         'dueDate': dueDate.toIso8601String(),
-//         'priority': priority,
-//         'isComplete': isComplete,
-//       };
-// }
-
 class Task {
   final String? id;
   final String title;
@@ -55,7 +17,7 @@ class Task {
 
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(
-      id: json['_id'], // Matches the API-generated ID
+      id: json['_id'],
       title: json['title'],
       notes: json['notes'],
       dueDate: DateTime.parse(json['dueDate']),

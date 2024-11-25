@@ -1,7 +1,6 @@
 import 'package:first_app_to_do_list/api.dart';
 import 'package:first_app_to_do_list/model.dart';
 import 'package:first_app_to_do_list/screens/edit_task_screen.dart';
-// import 'package:first_app_to_do_list/screens/task_form_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +36,6 @@ class TaskProvider with ChangeNotifier {
 
   List<Task> get tasks => _tasks;
 
-  // Fetch all tasks
   Future<void> fetchTasks() async {
     try {
       _tasks = await _service.fetchTasks();
@@ -47,7 +45,6 @@ class TaskProvider with ChangeNotifier {
     }
   }
 
-  // Add a new task
   Future<void> addTask(Task task) async {
     try {
       await _service.addTask(task);
@@ -57,7 +54,6 @@ class TaskProvider with ChangeNotifier {
     }
   }
 
-  // Update an existing task
   Future<void> updateTask(Task task) async {
     try {
       await _service.updateTask(task);
@@ -67,7 +63,6 @@ class TaskProvider with ChangeNotifier {
     }
   }
 
-  // Delete a task
   Future<void> deleteTask(String id) async {
     try {
       await _service.deleteTask(id);
