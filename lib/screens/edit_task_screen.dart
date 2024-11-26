@@ -1,6 +1,5 @@
 import 'package:first_app_to_do_list/main.dart';
 import 'package:first_app_to_do_list/model.dart';
-import 'package:first_app_to_do_list/provider.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

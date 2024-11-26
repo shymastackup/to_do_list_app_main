@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 class TaskService {
   final String baseUrl =
-      "https://crudcrud.com/api/1f45f0902fb74bcd8f196d87c25cbe3f/tasks";
+      "https://crudcrud.com/api/33795667ff064032aec2e7adbef7dcd3/tasks";
 
   Future<List<Task>> fetchTasks() async {
     try {
